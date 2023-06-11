@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-
 import { useDispatch } from 'react-redux';
-import { contactsAdd } from '../../redux/contactsSlice';
+import { addContact } from '../../redux/contactsOperations';
 import css from './ContactForm.module.css';
 
 const ContactForm = () => {
@@ -9,32 +8,34 @@ const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
+  const handleChange = (e) => {
+    const { name, value } = e.currentTarget;
+    if (name === 'name') {
+      setName(value);
+    } else if (name === 'number') {
+      setNumber(value);
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (name.trim() === '' || number.trim() === '') {
-      alert('Fields must be filled!');
+    if (name === '') {
+      alert('Please enter a name');
       return;
     }
 
-    dispatch(contactsAdd({ name, number }));
+    if (number === '') {
+      alert('Please enter a phone number');
+      return;
+    }
+
+    const contact = {
+      name,
+      phone: number
+    };
+
+    dispatch(addContact(contact));
 
     setName('');
     setNumber('');

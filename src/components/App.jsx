@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Provider } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
 import ContactForm from './ContactForm/ContactForm';
-import { selectContacts } from '../redux/contactsSlice';
+import { getVisibleContacts } from '../redux/contactsSelectors';
 
 const App = () => {
   const [filter, setFilter] = useState('');
-  const contacts = useSelector(selectContacts);
-  
+  const contacts = useSelector(getVisibleContacts);
+
   const filteredContacts = contacts.filter(({ name }) =>
     name.toLowerCase().includes(filter.toLowerCase())
   );

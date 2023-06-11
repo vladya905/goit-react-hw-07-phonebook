@@ -1,32 +1,40 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-const initialState = {
-  items: [],
-};
+import { fetchContacts, addContact, deleteContact } from './contactsOperations';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState,
+  initialState: {
+    items: [],
+    filter: '',
+    isLoading: false,
+    error: null,
+  },
   reducers: {
-    contactsAdd: (state, { payload }) => {
-      const isDuplicate = state.items.find(
-        (contact) => contact.name === payload.name
-      );
-
-      if (!isDuplicate) {
-        state.items.push({ id: Date.now().toString(), ...payload });
-      } else {
-        alert("This contact already exists");
-      }
+    contactsFilter: (state, action) => {
+      state.filter = action.payload;
     },
-    contactsDelete: (state, { payload }) => {
-      state.items = state.items.filter((contact) => contact.id !== payload);
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.error = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.items = state.items.filter(({ id }) => id !== action.payload);
+      });
   },
 });
 
-export const { contactsAdd, contactsDelete } = contactsSlice.actions;
-
-export const selectContacts = (state) => state.contacts.items;
-
+export const { contactsFilter } = contactsSlice.actions;
 export default contactsSlice.reducer;
