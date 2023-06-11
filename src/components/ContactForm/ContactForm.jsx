@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/contactsOperations';
 import css from './ContactForm.module.css';
 
@@ -7,6 +7,8 @@ const ContactForm = () => {
   const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const contacts = useSelector(state => state.contacts.items);
 
   const handleChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -27,6 +29,13 @@ const ContactForm = () => {
 
     if (number === '') {
       alert('Please enter a phone number');
+      return;
+    }
+
+    const existingContact = contacts.find(contact => contact.name === name);
+
+    if(existingContact) {
+      alert(`${name} is already in contacts.`);
       return;
     }
 
